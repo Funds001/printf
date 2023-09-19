@@ -1,99 +1,66 @@
-#include <stdarg.h>
-#include <unistd.h>
 #include "main.h"
-#include <string.h>
 
-int print_positive_integer(int num);
-
-/**
- * print_integer - Print an integer
- * @args: va_list containing the integer to print
- * Return: Number of characters printed
- */
-int print_integer(va_list args)
-{
-	int num = va_arg(args, int);
-	int count = 0;
-
-	if (num < 0)
-	{
-		write(1, "-", 1);
-		num = -num;
-		count++;
-	}
-
-	if (num == 0)
-	{
-		write(1, "0", 1);
-		count++;
-	}
-	else
-	{
-		count += print_positive_integer(num);
-	}
-
-	return (count);
-}
-
-/**
- * print_positive_integer - Print a positive integer
- * @num: The positive integer to print
- * Return: Number of characters printed
- */
-int print_positive_integer(int num)
-{
-	int count = 0;
-	char digit;
-
-	if (num / 10 != 0)
-		count += print_positive_integer(num / 10);
-
-	digit = (num % 10) + '0';
-	write(1, &digit, 1);
-	count++;
-
-	return (count);
-}
+void print_buffer(char buffer[], int *buff_ind);
 
 /**
  * _printf - Printf function
- * @format: Format string
- * Return: Number of characters printed
+ * @format: format.
+ * Return: Printed chars.
  */
 int _printf(const char *format, ...)
 {
-	va_list args;
-	int printed_chars = 0;
-	int i = 0;
+	int i, printed = 0, printed_chars = 0;
+	int flags, width, precision, size, buff_ind = 0;
+	va_list list;
+	char buffer[BUFF_SIZE];
 
-	va_start(args, format);
+	if (format == NULL)
+		return (-1);
 
-	while (format && format[i])
+	va_start(list, format);
+
+	for (i = 0; format && format[i] != '\0'; i++)
 	{
 		if (format[i] != '%')
 		{
-			write(1, &format[i], 1);
+			buffer[buff_ind++] = format[i];
+			if (buff_ind == BUFF_SIZE)
+				print_buffer(buffer, &buff_ind);
+			/* write(1, &format[i], 1);*/
 			printed_chars++;
 		}
 		else
 		{
-			i++;
-			if (format[i] == '\0')
+			print_buffer(buffer, &buff_ind);
+			flags = get_flags(format, &i);
+			width = get_width(format, &i, list);
+			precision = get_precision(format, &i, list);
+			size = get_size(format, &i);
+			++i;
+			printed = handle_print(format, &i, list, buffer,
+				flags, width, precision, size);
+			if (printed == -1)
 				return (-1);
-
-			if (format[i] == 'd' || format[i] == 'i')
-				printed_chars += print_integer(args);
-			else
-			{
-				write(1, "%", 1);
-				write(1, &format[i], 1);
-				printed_chars += 2;
-			}
+			printed_chars += printed;
 		}
-		i++;
 	}
 
-	va_end(args);
+	print_buffer(buffer, &buff_ind);
+
+	va_end(list);
 
 	return (printed_chars);
+}
+
+/**
+ * print_buffer - Prints the contents of the buffer if it exist
+ * @buffer: Array of chars
+ * @buff_ind: Index at which to add next char, represents the length.
+ */
+void print_buffer(char buffer[], int *buff_ind)
+{
+	if (*buff_ind > 0)
+		write(1, &buffer[0], *buff_ind);
+
+	*buff_ind = 0;
 }
