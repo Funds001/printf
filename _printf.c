@@ -3,80 +3,97 @@
 #include "main.h"
 #include <string.h>
 
-/**
-* print_char - print a single character
-* @args:  a va_list containing the character to print
-* Return: the number of characters printed
-*/
-int print_char(va_list args)
-{
-	char c = va_arg(args, int);
+int print_positive_integer(int num);
 
-	return (write(1, &c, 1));
+/**
+ * print_integer - Print an integer
+ * @args: va_list containing the integer to print
+ * Return: Number of characters printed
+ */
+int print_integer(va_list args)
+{
+	int num = va_arg(args, int);
+	int count = 0;
+
+	if (num < 0)
+	{
+		write(1, "-", 1);
+		num = -num;
+		count++;
+	}
+
+	if (num == 0)
+	{
+		write(1, "0", 1);
+		count++;
+	}
+	else
+	{
+		count += print_positive_integer(num);
+	}
+
+	return (count);
 }
 
 /**
-* print_string - print a string
-* @args: a va_list containing the string to print
-* Return: the  numbers of characters printed
-*/
-int print_string(va_list args)
+ * print_positive_integer - Print a positive integer
+ * @num: The positive integer to print
+ * Return: Number of characters printed
+ */
+int print_positive_integer(int num)
 {
-	char *str = va_arg(args, char*);
-	int len = 0;
+	int count = 0;
+	char digit;
 
-	if (str == NULL)
-		str = "(null)";
+	if (num / 10 != 0)
+		count += print_positive_integer(num / 10);
 
-	while (str[len])
-		len++;
-	return (write(1, str, len));
+	digit = (num % 10) + '0';
+	write(1, &digit, 1);
+	count++;
+
+	return (count);
 }
 
 /**
-* print_percent - print a percent sign
-* @args: unused
-* Return: the number of character printed
-*/
-int print_percent(va_list args __attribute__((unused)))
-{
-	return (write(1, "%", 1));
-}
-
-/**
-* _printf - produces output according to a format
-* @format: a character string containing directives
-* Return: the number of characters printed (excluding null bytes)
-*/
+ * _printf - Printf function
+ * @format: Format string
+ * Return: Number of characters printed
+ */
 int _printf(const char *format, ...)
 {
 	va_list args;
-	int pc = 0, i = 0;
+	int printed_chars = 0;
+	int i = 0;
 
 	va_start(args, format);
 
-	while (format[i])
+	while (format && format[i])
 	{
 		if (format[i] != '%')
 		{
-			pc += write(1, &format[i], 1);
+			write(1, &format[i], 1);
+			printed_chars++;
 		}
 		else
 		{
 			i++;
 			if (format[i] == '\0')
 				return (-1);
-			if (format[i] == 'c')
-				pc += print_char(args);
-			else if (format[i] == 's')
-				pc += print_string(args);
-			else if (format[i] == '%')
-				pc += print_percent(args);
+
+			if (format[i] == 'd' || format[i] == 'i')
+				printed_chars += print_integer(args);
 			else
-				return (-1);
+			{
+				write(1, "%", 1);
+				write(1, &format[i], 1);
+				printed_chars += 2;
+			}
 		}
 		i++;
 	}
+
 	va_end(args);
-	return (pc);
+
+	return (printed_chars);
 }
