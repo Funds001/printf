@@ -56,6 +56,7 @@ int print_int(va_list args)
 	char buffer[12];
 
 	int len = snprintf(buffer, sizeof(buffer), "%d", n);
+
 	return (write(1, buffer, len));
 }
 
