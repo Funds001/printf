@@ -30,7 +30,7 @@ int print_string(va_list args)
 		str = "(null)";
 
 	while (str[len])
-	len++;
+		len++;
 	return (write(1, str, len));
 }
 
@@ -42,7 +42,7 @@ int print_string(va_list args)
 
 int print_percent(va_list args __attribute__((unused)))
 {
-	return (write(1, "&", 1));
+	return (write(1, "%", 1));
 }
 
 /**
