@@ -46,6 +46,20 @@ int print_percent(va_list args __attribute__((unused)))
 }
 
 /**
+* print_int - print an integer
+* @args: a va_list containing the integer to print
+* Return: the number of characters printed
+*/
+int print_int(va_list args)
+{
+	int n = va_arg(args, int);
+	char buffer[12];
+
+	int len = snprintf(buffer, sizeof(buffer), "%d", n);
+	return (write(1, buffer, len));
+}
+
+/**
  * _printf - produce output according to format
  * @format: a character string containing directives
  * Return: the number of character printed (excluding null bytes)
@@ -72,12 +86,10 @@ int _printf(const char *format, ...)
 				pc += print_char(args);
 			else if (format[i] == 's')
 				pc += print_string(args);
+			else if (format[i] == 'd' || format[i] == 'i')
+				pc += print_int(args);
 			else if (format[i] == '%')
 				pc += print_percent(args);
-			else if (format[i] == 'd')
-				pc += print_char(args);
-			else if (format[i] == 'i')
-				pc += print_char(args);
 			else
 				return (-1);
 		}
