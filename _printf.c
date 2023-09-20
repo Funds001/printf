@@ -61,6 +61,38 @@ int print_int(va_list args)
 }
 
 /**
+ * print_binary - print an unsigned int in binary
+ * @args: a va_list containing the unsigned int to print
+ * Return: the number of characters printed
+ */
+int print_binary(va_list args)
+{
+	unsigned int n = va_arg(args, unsigned int);
+	char buffer[32];
+	int i = 0;
+
+	if (n == 0)
+		return (write(1, "0", 1));
+
+	while (n > 0)
+	{
+		buffer[i] = (n & 1) + '0';
+		n >>= 1;
+		i++;
+	}
+
+	i--;
+
+	while (i >= 0)
+	{
+		write(1, &buffer[i], 1);
+		i--;
+	}
+
+	return (i);
+}
+
+/**
  * _printf - produce output according to format
  * @format: a character string containing directives
  * Return: the number of character printed (excluding null bytes)
@@ -89,6 +121,8 @@ int _printf(const char *format, ...)
 				pc += print_string(args);
 			else if (format[i] == 'd' || format[i] == 'i')
 				pc += print_int(args);
+			else if (format[i] == 'b')
+				pc += print_binary(args);
 			else if (format[i] == '%')
 				pc += print_percent(args);
 			else
