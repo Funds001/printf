@@ -95,7 +95,7 @@ int _printf(const char *format, ...)
 				pc += print_percent(args);
 			else
 			{
-				m_err_len = snprintf(m_error, sizeof(m_error), "%%%c", *format);
+				m_err_len = snprintf(m_error, sizeof(m_error), "%%%c", format[i]);
 
 				write(1, m_error, m_err_len);
 				pc += m_err_len;
