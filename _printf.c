@@ -29,12 +29,9 @@ int print_string(va_list args)
 	if (str == NULL)
 		str = "(null)";
 
-	for (; *str; ++str)
-	{
-		_putchar(*str);
-		++len;
-	}
-	return (len);
+	while (str[len])
+	len++;
+	return (write(1, str,len));
 }
 
 /**
