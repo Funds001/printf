@@ -1,66 +1,84 @@
+#include <stdarg.h>
+#include <unistd.h>
 #include "main.h"
-
-void print_buffer(char buffer[], int *buff_ind);
+#include <string.h>
+#include <stdio.h>
 
 /**
- * _printf - Printf function
- * @format: format.
- * Return: Printed chars.
+ * print_char - print a single character
+ * @args: a va_list containing the character to point
+ * Return: the number of characters printed
  */
-int _printf(const char *format, ...)
+int print_char(va_list args)
 {
-	int i, printed = 0, printed_chars = 0;
-	int flags, width, precision, size, buff_ind = 0;
-	va_list list;
-	char buffer[BUFF_SIZE];
+	char c = va_arg(args,int);
 
-	if (format == NULL)
-		return (-1);
-
-	va_start(list, format);
-
-	for (i = 0; format && format[i] != '\0'; i++)
-	{
-		if (format[i] != '%')
-		{
-			buffer[buff_ind++] = format[i];
-			if (buff_ind == BUFF_SIZE)
-				print_buffer(buffer, &buff_ind);
-			/* write(1, &format[i], 1);*/
-			printed_chars++;
-		}
-		else
-		{
-			print_buffer(buffer, &buff_ind);
-			flags = get_flags(format, &i);
-			width = get_width(format, &i, list);
-			precision = get_precision(format, &i, list);
-			size = get_size(format, &i);
-			++i;
-			printed = handle_print(format, &i, list, buffer,
-				flags, width, precision, size);
-			if (printed == -1)
-				return (-1);
-			printed_chars += printed;
-		}
-	}
-
-	print_buffer(buffer, &buff_ind);
-
-	va_end(list);
-
-	return (printed_chars);
+	return (write(1, &c, 1));
 }
 
 /**
- * print_buffer - Prints the contents of the buffer if it exist
- * @buffer: Array of chars
- * @buff_ind: Index at which to add next char, represents the length.
+ * print_string- print a string
+ * @args: a va_list containing the string to print
+ * Return: the nurmber of characters printed
  */
-void print_buffer(char buffer[], int *buff_ind)
+int print_string(va_list args)
 {
-	if (*buff_ind > 0)
-		write(1, &buffer[0], *buff_ind);
+	char *str = va_arg(args, char*);
+	int len = 0;
 
-	*buff_ind = 0;
+	if (str == NULL)
+		str = "(null)";
+
+	while (str[len])
+		len++;
+	return (write(1, str, len));
+}
+
+/**
+ * print_percent - print percent sign
+ * @args: unused
+ * Return: the number of character printed
+ */
+
+int print_percent(va_list args __attribute__((unused)))
+{
+	return (write(1, "%", 1));
+}
+
+/**
+ * _printf - produce output according to format
+ * @format: a character string containing directives
+ * Return: the number of character printed (excluding null bytes)
+ */
+int _printf(const char*format, ...)
+{
+	va_list args;
+	int pc = 0, i = 0;
+
+	va_start(args, format);
+
+	while (format[i])
+	{
+		if (format[i] != '%')
+		{
+			pc += write(1, &format[i],1);
+		}
+		else
+		{
+			i++;
+			if (format[i] == '\0')
+				return (-1);
+			if (format[i] == 'c')
+				pc += print_char(args);
+			else if (format[i] == 's')
+				pc += print_string(args);
+			else if (format[i] == '%')
+				pc += print_percent(args);
+			else
+				return (-1);
+		}
+		i++;
+	}
+	va_end(args);
+	return (pc);
 }
