@@ -13,7 +13,6 @@ int print_char(va_list args)
 {
 	int c = va_arg(args, int);
 
-	_putchar(c);
 	return (1);
 }
 
@@ -46,7 +45,7 @@ int print_string(va_list args)
 
 int print_percent(va_list args __attribute__((unused)))
 {
-	return (1);
+	return (write(1, str, len));
 }
 
 /**
