@@ -67,8 +67,8 @@ int print_int(va_list args)
  */
 int _printf(const char *format, ...)
 {
-	char m_error[7];
-	int m_err_len;
+	char c_format[7];
+	int c_format_len;
 	va_list args;
 	int pc = 0, i = 0;
 
@@ -95,10 +95,10 @@ int _printf(const char *format, ...)
 				pc += print_percent(args);
 			else
 			{
-				m_err_len = snprintf(m_error, sizeof(m_error), "%%%c", format[i]);
+				c_format_len = snprintf(c_format, sizeof(c_format), "%%%c", format[i]);
 
-				write(1, m_error, m_err_len);
-				pc += m_err_len;
+				write(1, c_format, c_format_len);
+				pc += c_format_len;
 			}
 		}
 		i++;
