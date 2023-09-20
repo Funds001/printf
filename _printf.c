@@ -74,6 +74,10 @@ int _printf(const char *format, ...)
 				pc += print_string(args);
 			else if (format[i] == '%')
 				pc += print_percent(args);
+			else if (format[i] == 'd')
+				pc += print_char(args);
+			else if (format[i] == 'i')
+				pc += print_char(args);
 			else
 				return (-1);
 		}
