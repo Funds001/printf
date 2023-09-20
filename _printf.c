@@ -29,9 +29,12 @@ int print_string(va_list args)
 	if (str == NULL)
 		str = "(null)";
 
-	while (str[len])
-		len++;
-	return (write(1, str, len));
+	for (; *str; ++str)
+	{
+		_putchar(*str);
+		++len;
+	}
+	return (len);
 }
 
 /**
