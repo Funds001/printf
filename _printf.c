@@ -11,9 +11,10 @@
  */
 int print_char(va_list args)
 {
-	char c = va_arg(args, int);
+	int c = va_arg(args, int);
 
-	return (write(1, &c, 1));
+	_putchar(c);
+	return (1);
 }
 
 /**
@@ -45,7 +46,7 @@ int print_string(va_list args)
 
 int print_percent(va_list args __attribute__((unused)))
 {
-	return (write(1, "%", 1));
+	return (1);
 }
 
 /**
@@ -61,38 +62,6 @@ int print_int(va_list args)
 	int len = snprintf(buffer, sizeof(buffer), "%d", n);
 
 	return (write(1, buffer, len));
-}
-
-/**
- * print_binary - print an unsigned int in binary
- * @args: a va_list containing the unsigned int to print
- * Return: the number of characters printed
- */
-int print_binary(va_list args)
-{
-	unsigned int n = va_arg(args, unsigned int);
-	char buffer[32];
-	int i = 0;
-
-	if (n == 0)
-		return (write(1, "0", 1));
-
-	while (n > 0)
-	{
-		buffer[i] = (n & 1) + '0';
-		n >>= 1;
-		i++;
-	}
-
-	i--;
-
-	while (i >= 0)
-	{
-		write(1, &buffer[i], 1);
-		i--;
-	}
-
-	return (i);
 }
 
 /**
@@ -124,8 +93,6 @@ int _printf(const char *format, ...)
 				pc += print_string(args);
 			else if (format[i] == 'd' || format[i] == 'i')
 				pc += print_int(args);
-			else if (format[i] == 'b')
-				pc += print_binary(args);
 			else if (format[i] == '%')
 				pc += print_percent(args);
 			else
