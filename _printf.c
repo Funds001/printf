@@ -11,7 +11,7 @@
  */
 int print_char(va_list args)
 {
-	char c = va_arg(args,int);
+	char c = va_arg(args, int);
 
 	return (write(1, &c, 1));
 }
@@ -50,7 +50,7 @@ int print_percent(va_list args __attribute__((unused)))
  * @format: a character string containing directives
  * Return: the number of character printed (excluding null bytes)
  */
-int _printf(const char*format, ...)
+int _printf(const char *format, ...)
 {
 	va_list args;
 	int pc = 0, i = 0;
@@ -61,7 +61,7 @@ int _printf(const char*format, ...)
 	{
 		if (format[i] != '%')
 		{
-			pc += write(1, &format[i],1);
+			pc += write(1, &format[i], 1);
 		}
 		else
 		{
