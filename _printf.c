@@ -12,8 +12,12 @@
 int print_char(va_list args)
 {
 	char c = va_arg(args, int);
+	char buffer[2];
 
-	return (write(1, &c, 1));
+	buffer[0] = c;
+	buffer[1] = '\0';
+
+	return (write(1, buffer, 1));
 }
 
 /**
@@ -42,9 +46,7 @@ int print_string(va_list args)
 
 int print_percent(va_list args __attribute__((unused)))
 {
-	write(1, "%", 1);
-
-	return (0);
+	return (write(1, "%", 1));
 }
 
 /**
